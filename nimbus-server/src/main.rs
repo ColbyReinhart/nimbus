@@ -3,10 +3,13 @@
 // 10-27-2022
 
 #[macro_use] extern crate rocket;
+#[macro_use] extern crate rocket_dyn_templates;
 
 use rocket::fs::NamedFile;
 use std::path::{Path, PathBuf};
 use std::fs::{read_dir};
+use rocket_dyn_templates::Template;
+use std::vec::Vec;
 
 //
 // Rocket boilerplate
@@ -15,11 +18,14 @@ use std::fs::{read_dir};
 #[launch]
 fn rocket() -> _
 {
-	rocket::build().mount("/", routes![
-		homepage,
-		get_static,
-		get_cloud_resource
-	])
+	rocket::build()
+		.mount("/", routes![
+			homepage,
+			get_static,
+			get_cloud_resource,
+			template
+		])
+		.attach(Template::fairing())
 }
 
 // TODO: Implement favicon
@@ -65,4 +71,14 @@ async fn get_cloud_resource(user: &str, filepath: PathBuf) -> Result<String, std
 	{
 		std::fs::read_to_string(resource_path)
 	}
+}
+
+// Testing templates
+#[get("/template")]
+fn template() -> Template
+{
+	let vector = Vec::from([1, 2, 3, 4, 5]);
+	Template::render("index", context! {
+		numbers: vector
+	})
 }
