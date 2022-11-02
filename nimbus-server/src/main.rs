@@ -22,8 +22,7 @@ fn rocket() -> _
 		.mount("/", routes![
 			homepage,
 			get_static,
-			get_cloud_resource,
-			template
+			get_cloud_resource
 		])
 		.attach(Template::fairing())
 }
@@ -46,39 +45,29 @@ async fn get_static(file: PathBuf) -> Option<NamedFile>
 
 // Route user resources
 #[get("/user-files/<user>/<filepath..>")]
-async fn get_cloud_resource(user: &str, filepath: PathBuf) -> Result<String, std::io::Error>
+async fn get_cloud_resource(user: &str, filepath: PathBuf) -> Template
 {
 	// If it's a directory, serve a list of files
 	let resource_path: PathBuf = Path::new("user-files/").join(user).join(filepath);
 	if resource_path.is_dir()
 	{
-		let mut res: String = "<!DOCTYPE html><html><body>".to_string();
-
-		for file in read_dir(resource_path).expect("Could not open directory")
-		{
-			let filename: String = file.unwrap().path().display().to_string();
-			res.push_str("<a href=\"");
-			res.push_str(&filename);
-			res.push_str("\">");
-			res.push_str(&filename);
-			res.push_str("</a><br>");
-		}
-
-		res.push_str("</body></html>");
-		Ok(res)
+		// Surely there's a better way to do this
+		Template::render("file-explorer", context!{
+			files: read_dir(&resource_path)
+				.unwrap()
+				.map(|entry| entry.unwrap().file_name().to_str().unwrap().to_owned())
+				.map(|filename| String::from("<a href=\"/")
+					+ resource_path.join(&filename).to_str().unwrap()
+					+ "\">"
+					+ &filename
+					+ "<a>")
+					.collect::<Vec<String>>()
+		})
 	}
 	else
 	{
-		std::fs::read_to_string(resource_path)
+		Template::render("view-file", context! [
+			file: std::fs::read_to_string(resource_path).unwrap()
+		])
 	}
-}
-
-// Testing templates
-#[get("/template")]
-fn template() -> Template
-{
-	let vector = Vec::from([1, 2, 3, 4, 5]);
-	Template::render("index", context! {
-		numbers: vector
-	})
 }
