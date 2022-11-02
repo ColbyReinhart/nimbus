@@ -44,8 +44,6 @@ async fn get_cloud_resource(user: &str, filepath: PathBuf) -> Result<String, std
 {
 	// If it's a directory, serve a list of files
 	let resource_path: PathBuf = Path::new("user-files/").join(user).join(filepath);
-	println!("{}", resource_path.display());
-	println!("{}", resource_path.is_dir());
 	if resource_path.is_dir()
 	{
 		let mut res: String = "<!DOCTYPE html><html><body>".to_string();
