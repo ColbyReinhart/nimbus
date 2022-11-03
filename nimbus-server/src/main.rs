@@ -53,26 +53,6 @@ async fn get_cloud_resource(user: &str, filepath: PathBuf) -> Template
 	let resource_path: PathBuf = Path::new("user-files/").join(user).join(filepath);
 	if resource_path.is_dir()
 	{
-		// Make a collection to hold resource links
-		/*let mut resource_links: Vec<ResourceLink> = Vec::new();
-
-		// For every file in this given directory
-		for entry in read_dir(&resource_path).unwrap()
-		{
-			// Get the file name and path and add it to the list of links
-			let entry: DirEntry = entry.unwrap();
-			let link: ResourceLink = ResourceLink
-			{
-				path: entry.path().to_path_buf(),
-				name: entry.file_name().to_str().unwrap().to_owned()
-			};
-			resource_links.push(link);
-		}
-
-		Template::render("file-explorer", context! [
-			links: resource_links
-		])*/
-
 		Template::render("file-explorer", context! [
 			links: read_dir(&resource_path)
 				.unwrap()
