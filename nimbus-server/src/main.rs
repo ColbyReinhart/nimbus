@@ -6,7 +6,7 @@
 #[macro_use] extern crate rocket_dyn_templates;
 
 use std::path::{Path, PathBuf};
-use std::fs::{read_dir, DirEntry};
+use std::fs::read_dir;
 use std::vec::Vec;
 
 use rocket::fs::NamedFile;
@@ -54,7 +54,7 @@ async fn get_cloud_resource(user: &str, filepath: PathBuf) -> Template
 	if resource_path.is_dir()
 	{
 		// Make a collection to hold resource links
-		let mut resource_links: Vec<ResourceLink> = Vec::new();
+		/*let mut resource_links: Vec<ResourceLink> = Vec::new();
 
 		// For every file in this given directory
 		for entry in read_dir(&resource_path).unwrap()
@@ -71,6 +71,13 @@ async fn get_cloud_resource(user: &str, filepath: PathBuf) -> Template
 
 		Template::render("file-explorer", context! [
 			links: resource_links
+		])*/
+
+		Template::render("file-explorer", context! [
+			links: read_dir(&resource_path)
+				.unwrap()
+				.map(|entry| ResourceLink::from_dir_entry(entry.unwrap()))
+				.collect::<Vec<ResourceLink>>()
 		])
 	}
 	else
