@@ -5,11 +5,14 @@
 #[macro_use] extern crate rocket;
 #[macro_use] extern crate rocket_dyn_templates;
 
-use rocket::fs::NamedFile;
 use std::path::{Path, PathBuf};
-use std::fs::{read_dir};
-use rocket_dyn_templates::Template;
+use std::fs::{read_dir, DirEntry};
 use std::vec::Vec;
+
+use rocket::fs::NamedFile;
+use rocket_dyn_templates::Template;
+
+use nimbus_server::ResourceLink;
 
 //
 // Rocket boilerplate
@@ -47,22 +50,28 @@ async fn get_static(file: PathBuf) -> Option<NamedFile>
 #[get("/user-files/<user>/<filepath..>")]
 async fn get_cloud_resource(user: &str, filepath: PathBuf) -> Template
 {
-	// If it's a directory, serve a list of files
 	let resource_path: PathBuf = Path::new("user-files/").join(user).join(filepath);
 	if resource_path.is_dir()
 	{
-		// Surely there's a better way to do this
-		Template::render("file-explorer", context!{
-			files: read_dir(&resource_path)
-				.unwrap()
-				.map(|entry| entry.unwrap().file_name().to_str().unwrap().to_owned())
-				.map(|filename| String::from("<a href=\"/")
-					+ resource_path.join(&filename).to_str().unwrap()
-					+ "\">"
-					+ &filename
-					+ "<a>")
-					.collect::<Vec<String>>()
-		})
+		// Make a collection to hold resource links
+		let mut resource_links: Vec<ResourceLink> = Vec::new();
+
+		// For every file in this given directory
+		for entry in read_dir(&resource_path).unwrap()
+		{
+			// Get the file name and path and add it to the list of links
+			let entry: DirEntry = entry.unwrap();
+			let link: ResourceLink = ResourceLink
+			{
+				path: entry.path().to_path_buf(),
+				name: entry.file_name().to_str().unwrap().to_owned()
+			};
+			resource_links.push(link);
+		}
+
+		Template::render("file-explorer", context! [
+			links: resource_links
+		])
 	}
 	else
 	{

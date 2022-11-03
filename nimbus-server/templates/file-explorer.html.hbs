@@ -10,8 +10,8 @@
 		<script src="https://kit.fontawesome.com/e4862ea8a4.js" crossorigin="anonymous"></script>
 	</head>
 	<body>
-		{{#each files}}
-		{{{this}}}<br>
+		{{#each links}}
+		<a href="/{{this.path}}">{{this.name}}</a><br>
 		{{/each}}
 	</body>
 </html>
