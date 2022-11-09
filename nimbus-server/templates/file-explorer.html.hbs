@@ -8,13 +8,20 @@
 
 		<title>Nimbus Cloud</title>
 		<script src="https://kit.fontawesome.com/e4862ea8a4.js" crossorigin="anonymous"></script>
+		<script defer src="/static/js/file-explorer.js"></script>
 	</head>
 	<body>
+
 		{{#each links}}
 		<a href="/{{this.path}}">{{this.name}}</a><br>
 		{{/each}}
-		<form method="PUT">
 
+		<br>
+
+		<form id="uploadResource" method="POST">
+			<input id ="uploadFile" type="file" name="file">
+			<input type="checkbox" name="is_directory">
+			<button id="formSubmit" type="button">Submit</button>
 		</form>
 	</body>
 </html>

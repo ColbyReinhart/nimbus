@@ -112,7 +112,8 @@ async fn put_cloud_resource(filepath: PathBuf, form: Form<FileUpload<'_>>) -> St
 			Ok(()) => {
 				Status::Created
 			},
-			Err(_) => {
+			Err(what) => {
+				print!("{}", what);
 				Status::InternalServerError
 			}
 		}
