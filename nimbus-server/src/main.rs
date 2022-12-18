@@ -9,7 +9,7 @@ use std::path::{Path, PathBuf};
 use std::fs::read_dir;
 use std::vec::Vec;
 
-use rocket::fs::{TempFile, NamedFile};
+use rocket::fs::{NamedFile};
 use rocket::form::Form;
 use rocket::http::Status;
 use rocket_dyn_templates::Template;
@@ -28,7 +28,7 @@ fn rocket() -> _
 			homepage,
 			get_static,
 			get_cloud_resource,
-			put_cloud_resource
+			put_cloud_file
 		])
 		.attach(Template::fairing())
 }
@@ -78,51 +78,31 @@ async fn get_cloud_resource(user: &str, filepath: PathBuf) -> Template
 	}
 }
 
-// Structure for getting the uploaded file
-#[derive(FromForm)]
-pub struct FileUpload<'r>
-{
-	is_directory: bool,
-	file: TempFile<'r>
-}
-
-impl<'r> FileUpload<'r> {
-	// Move the file out of the struct
-	pub fn take_file(self) -> TempFile<'r>
-	{
-		self.file
-	}
-}
-
-// Upload user resource
+// Upload user file
 #[post("/user-files/<filepath..>", data = "<form>")]
-async fn put_cloud_resource(filepath: PathBuf, form: Form<FileUpload<'_>>) -> Status
+async fn put_cloud_file(filepath: PathBuf, form: Form<nimbus_server::FileUpload<'_>>) -> Status
 {
 	// Get the full path for the file based on the configured file root
-	let full_path = Path::new("user-files/").join(filepath);
+	let full_path: PathBuf = Path::new("user-files/").join(filepath);
 
-	// If it's a directory, create it
-	if form.is_directory
+	// Try to get the uploaded file and save it to full_path, return 500 otherwise
+	match form.into_inner().take_file().persist_to(full_path).await
 	{
-		match std::fs::create_dir(full_path)
-		{
-			Ok(()) => { return Status::Created },
-			Err(_) => { return Status::InternalServerError }
-		}
-	}
-	// Otherwise, create the file
-	else
-	{
-		// Try to get the uploaded file and save it to full_path, return 500 otherwise
-		match form.into_inner().take_file().persist_to(full_path).await
-		{
-			Ok(()) => {
-				Status::Created
-			},
-			Err(what) => {
-				print!("{}", what);
-				Status::InternalServerError
-			}
+		Ok(()) => {
+			Status::Created
+		},
+		Err(what) => {
+			print!("{}", what);
+			Status::InternalServerError
 		}
 	}
 }
+
+// if form.is_directory
+// 	{
+// 		match std::fs::create_dir(full_path)
+// 		{
+// 			Ok(()) => { return Status::Created },
+// 			Err(_) => { return Status::InternalServerError }
+// 		}
+// 	}
