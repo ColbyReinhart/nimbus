@@ -53,16 +53,23 @@ async fn get_static(file: PathBuf) -> Option<NamedFile>
 #[get("/user-files/<user>/<filepath..>")]
 async fn get_cloud_resource(user: &str, filepath: PathBuf) -> Template
 {
+	// Get the resource path as a PathBuf
 	let resource_path: PathBuf = Path::new("user-files/").join(user).join(filepath);
+	
+	// If it's a directory, we'll open it and display it's contents as a page
 	if resource_path.is_dir()
 	{
 		Template::render("file-explorer", context! [
+			// Read the contents of the directory and instantiate them as a
+			// vector of resource links (see lib.rs)
 			links: read_dir(&resource_path)
 				.unwrap()
 				.map(|entry| ResourceLink::from_dir_entry(entry.unwrap()))
 				.collect::<Vec<ResourceLink>>()
 		])
 	}
+
+	// Otherwise, we'll respond with the file
 	else
 	{
 		Template::render("view-file", context! [
