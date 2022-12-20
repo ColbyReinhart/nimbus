@@ -1,7 +1,6 @@
 extern crate serde;
 
 use std::path::PathBuf;
-use std::fs::DirEntry;
 
 use rocket::serde::Serialize;
 use rocket::fs::TempFile;
@@ -12,19 +11,8 @@ use rocket::FromForm;
 pub struct ResourceLink
 {
 	pub path: PathBuf,
-	pub name: String
-}
-
-impl ResourceLink
-{
-	pub fn from_dir_entry(entry: DirEntry) -> Self
-	{
-		ResourceLink
-		{
-			path: entry.path().to_path_buf(),
-			name: entry.file_name().to_str().unwrap().to_owned()
-		}
-	}
+	pub name: String,
+	pub is_dir: bool
 }
 
 // Structure for getting the uploaded file
