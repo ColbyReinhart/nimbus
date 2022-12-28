@@ -12,6 +12,7 @@ use std::vec::Vec;
 use rocket::fs::{NamedFile};
 use rocket::http::Status;
 use rocket_dyn_templates::Template;
+use rocket::response::content;
 
 use nimbus_server::ResourceLink;
 
@@ -25,6 +26,8 @@ fn rocket() -> _
 	rocket::build()
 		.mount("/", routes![
 			homepage,
+			get_css,
+			get_js,
 			get_static,
 			get_file,
 			get_directory
@@ -41,8 +44,22 @@ async fn homepage() -> Option<NamedFile>
 	NamedFile::open(Path::new("templates/homescreen.html")).await.ok()
 }
 
+// Route CSS
+#[get("/static/css/<file>", rank = 1)]
+async fn get_css(file: PathBuf) -> content::RawCss<Option<NamedFile>>
+{
+	content::RawCss(NamedFile::open(Path::new("static/css/").join(file)).await.ok())
+}
+
+// Route JS
+#[get("/static/js/<file>", rank = 2)]
+async fn get_js(file: PathBuf) -> content::RawJavaScript<Option<NamedFile>>
+{
+	content::RawJavaScript(NamedFile::open(Path::new("static/js/").join(file)).await.ok())
+}
+
 // Route static folder
-#[get("/static/<file..>", rank = 1)]
+#[get("/static/<file..>", rank = 3)]
 async fn get_static(file: PathBuf) -> Option<NamedFile>
 {
 	NamedFile::open(Path::new("static/").join(file)).await.ok()	
