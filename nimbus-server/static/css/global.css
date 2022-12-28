@@ -7,3 +7,8 @@
 	--periwinkle: #9FA8EB;
 	--blue-iris: #9FA8EB;
 }
+
+/* --- General global styles --- */
+* {
+	font-family:'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+}
