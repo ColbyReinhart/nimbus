@@ -16,10 +16,10 @@
 	border: solid var(--blue-iris);
 	border-radius: 10px;
 	text-decoration: none;
-	font-size: 4vh;
+	font-size: 6vh;
 
 	display: flex;
 	align-items: center;
 	align-content: center;
-	justify-content: center;
+	justify-content: space-evenly;
 }

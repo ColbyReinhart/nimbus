@@ -26,7 +26,13 @@
 
 			{{#each links}}
 			<a class="resource" href="/{{this.path}}">
-				{{this.name}}
+				{{#if this.is_dir}}
+					<i class="fa-solid fa-folder"></i>
+				{{else}}
+					<i class="fa-solid fa-file"></i>
+				{{/if}}
+
+				<p>{{this.name}}</p>
 			</a>
 			{{/each}}
 
