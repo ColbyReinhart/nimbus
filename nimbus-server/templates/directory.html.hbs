@@ -15,9 +15,21 @@
 		<script defer src="/static/js/file-explorer.js"></script>
 	</head>
 	<body>
+		<!-- Title / navbar -->
+		<div id="titlebar">
+			Nimbus
+			<hr>
+		</div>
 
-		{{#each links}}
-		<a href="/{{this.path}}">{{this.name}}</a><br>
-		{{/each}}
+		<!-- Folders / Files -->
+		<div id="explorer">
+
+			{{#each links}}
+			<a class="resource" href="/{{this.path}}">
+				{{this.name}}
+			</a>
+			{{/each}}
+
+		</div>
 	</body>
 </html>
