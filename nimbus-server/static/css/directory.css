@@ -1,3 +1,25 @@
+button {
+	height: 80%;
+	width: 20%;
+	color: var(--background);
+	background-color: var(--blue-iris);
+	border-radius: 10px;
+	font-size: 5vh;
+}
+
+#titlebar {
+	width: 100vw;
+	height: 15vh;
+	font-weight: bolder;
+	color: var(--blue-iris);
+	font-size: 10vh;
+	
+	display: flex;
+	align-items: center;
+	align-content: center;
+	justify-content: space-around;
+}
+
 #explorer {
 	width: 100%;
 	height: 90%;
@@ -9,14 +31,46 @@
 
 }
 
+#file-dropzone {
+	width: 30vw;
+	height: 30vh;
+	border: dashed var(--blue-iris);
+}
+
+#modalWindow {
+	
+	background-color: rgba(100, 100, 100, 0.5);
+	position: absolute;
+	width: 100vw;
+	height: 100vh;
+}
+
+.modal {
+	position: absolute;
+	top: 20vh;
+	left: 20vw;
+	width: 60vw;
+	height: 60vh;
+	background-color: var(--background);
+	border-radius: 10px;
+	padding: 2%;
+
+	display: flex;
+	flex-direction: column;
+	flex-wrap: nowrap;
+	align-items: center;
+	align-items: flex-start;
+}
+
 .resource {
 	width: 20vw;
-	height: 10vw;
+	height: 20vh;
 	margin: 1vw;
 	border: solid var(--blue-iris);
 	border-radius: 10px;
 	text-decoration: none;
 	font-size: 6vh;
+	color: var(--blue-iris);
 
 	display: flex;
 	align-items: center;

@@ -15,11 +15,28 @@
 		<script defer src="/static/js/file-explorer.js"></script>
 	</head>
 	<body>
+		
+		<!-- Modals -->
+		<div id="modalWindow">
+		
+		<div id="newFileModal" class="modal">
+			<h2>New File</h2>
+			<p>Please drag and drop the desired file, or select manually<p>
+			<div id="file-dropzone">
+				<input id="manualFileUpload" type="file" name="file">
+			</div>
+		</div>
+		
+		</div>
+
 		<!-- Title / navbar -->
 		<div id="titlebar">
-			Nimbus
-			<hr>
+			<p>Nimbus</p>
+			<button id="createFolder">New Folder</button>
+			<button id="uploadFile">Upload File</button>
 		</div>
+
+		<hr>
 
 		<!-- Folders / Files -->
 		<div id="explorer">
